@@ -3,7 +3,7 @@ const { exec } = require("child_process");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -15,20 +15,21 @@ app.get("/", (req, res) => {
 });
 
 app.post("/download", (req, res) => {
-  const videoURL = req.body.videoURL;
-  if (!videoURL) return res.send("❌ Please enter a valid YouTube URL.");
+  const videoURL = req.body.videoURL?.trim();
+  if (!videoURL || !videoURL.startsWith("http")) {
+    return res.send("❌ Please enter a valid YouTube URL.");
+  }
 
   const command = `python3 -m yt_dlp -o "%(title)s.%(ext)s" "${videoURL}"`;
-
   console.log("▶ Running command:", command);
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error("❌ Download error:", stderr);
+      console.error("❌ Error:", stderr || error.message);
       return res.send("❌ Failed to download. Please try again.");
     }
 
-    console.log("✅ Download success:", stdout);
+    console.log("✅ Output:", stdout);
     res.send("✅ Video download started successfully on the server.");
   });
 });
