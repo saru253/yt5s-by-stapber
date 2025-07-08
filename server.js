@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -22,6 +21,7 @@ app.post("/download", (req, res) => {
     return res.send("❌ Please enter a valid YouTube URL.");
   }
 
+  // Correct yt-dlp command for Linux (Render)
   const command = `yt-dlp -o "%(title)s.%(ext)s" ${videoURL}`;
   console.log("▶ Running command:", command);
 
