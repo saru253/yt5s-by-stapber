@@ -16,22 +16,22 @@ app.get("/", (req, res) => {
 
 app.post("/download", (req, res) => {
   const videoURL = req.body.videoURL;
-
   if (!videoURL) {
     return res.send("❌ Please enter a valid YouTube URL.");
   }
 
-  // Correct yt-dlp command for Linux (Render)
-  const command = `yt-dlp -o "%(title)s.%(ext)s" ${videoURL}`;
-  console.log("▶ Running command:", command);
+  // Use full path to yt-dlp installed via pip3 on Render
+  const command = `python3 -m yt_dlp -o "%(title)s.%(ext)s" "${videoURL}"`;
+
+  console.log("▶ Running:", command);
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error("❌ Error:", error);
+      console.error("❌ Download Error:", error);
       return res.send("❌ Failed to download. Please try again.");
     }
 
-    console.log("✅ Video downloaded successfully!");
+    console.log("✅ Download success:", stdout);
     res.send("✅ Video download started successfully on the server.");
   });
 });
