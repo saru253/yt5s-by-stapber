@@ -16,22 +16,23 @@ app.get("/", (req, res) => {
 
 app.post("/download", (req, res) => {
   const videoURL = req.body.videoURL;
+
   if (!videoURL) {
     return res.send("❌ Please enter a valid YouTube URL.");
   }
 
-  // Use full path to yt-dlp installed via pip3 on Render
+  // 🟢 THIS COMMAND WORKS ON RENDER!
   const command = `python3 -m yt_dlp -o "%(title)s.%(ext)s" "${videoURL}"`;
 
-  console.log("▶ Running:", command);
+  console.log("▶ Running command:", command);
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error("❌ Download Error:", error);
+      console.error("❌ Error:", stderr);
       return res.send("❌ Failed to download. Please try again.");
     }
 
-    console.log("✅ Download success:", stdout);
+    console.log("✅ Output:", stdout);
     res.send("✅ Video download started successfully on the server.");
   });
 });
