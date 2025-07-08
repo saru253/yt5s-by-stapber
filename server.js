@@ -16,23 +16,19 @@ app.get("/", (req, res) => {
 
 app.post("/download", (req, res) => {
   const videoURL = req.body.videoURL;
+  if (!videoURL) return res.send("❌ Please enter a valid YouTube URL.");
 
-  if (!videoURL) {
-    return res.send("❌ Please enter a valid YouTube URL.");
-  }
-
-  // 🟢 THIS COMMAND WORKS ON RENDER!
   const command = `python3 -m yt_dlp -o "%(title)s.%(ext)s" "${videoURL}"`;
 
   console.log("▶ Running command:", command);
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error("❌ Error:", stderr);
+      console.error("❌ Download error:", stderr);
       return res.send("❌ Failed to download. Please try again.");
     }
 
-    console.log("✅ Output:", stdout);
+    console.log("✅ Download success:", stdout);
     res.send("✅ Video download started successfully on the server.");
   });
 });
